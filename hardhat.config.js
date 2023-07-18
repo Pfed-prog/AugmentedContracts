@@ -8,12 +8,12 @@ module.exports = {
   networks: {
     mumbai: {
       url: "https://rpc-mumbai.maticvigil.com",
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY, process.env.PRIVATE_KEY2],
     },
   },
   gasReporter: {
     currency: "CHF",
     gasPrice: 21,
-    enabled: true,
+    enabled: false,
   },
 };
