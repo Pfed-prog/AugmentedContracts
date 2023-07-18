@@ -1,6 +1,5 @@
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
-const { config, ethers } = require("hardhat");
+const { ethers } = require("hardhat");
 
 describe("Escrow", async function () {
   let escrowContract, exampleToken;

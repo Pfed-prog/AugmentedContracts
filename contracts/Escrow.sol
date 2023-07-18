@@ -7,10 +7,15 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract Escrow is ReentrancyGuard {
     address public admin;
 
+    uint public distributionTimeframe = 10 minutes;
+
+    uint public lastDistributionTimestamp;
+
     struct User {
         uint128 active;  // if the user is active
-        uint128 totalDispensed; // total earned
+        uint128 score; // total earned
     }
+
     mapping(address => User) users;
 
     address[] public usersList;
@@ -37,7 +42,7 @@ contract Escrow is ReentrancyGuard {
             'Active Account'
         );
         users[userAddress].active = 1;
-        users[userAddress].totalDispensed = 0;
+        users[userAddress].score = 0;
         usersList.push(userAddress);
         emit UserCreated(userAddress);
     }
@@ -48,12 +53,13 @@ contract Escrow is ReentrancyGuard {
             userAddress != address(0),
             'Invalid token contract address'
         );
-        return (users[userAddress].active, users[userAddress].totalDispensed);
+        return (users[userAddress].active, users[userAddress].score);
     }
 
 
     function multisendToken(address token, address[] calldata _contributors, uint256[] calldata _balances) public payable {
         require(msg.sender == admin, "You aren't the owner");
+        require(block.timestamp >= (lastDistributionTimestamp + 10 minutes));
         uint total;
         uint lengthContributors = _contributors.length;
         ERC20 erc20token = ERC20(token);
@@ -62,6 +68,17 @@ contract Escrow is ReentrancyGuard {
             total += _balances[i];
             unchecked{++i;}
         }
+        lastDistributionTimestamp = block.timestamp;
         emit MultiSent(total, token);
     }
+
+
+    function changeDistributionTimeframe(uint timeframe) public onlyOwner {
+        distributionTimeframe = timeframe;
+    }
+
+    function changeOwner(address newOwner) public onlyOwner {
+        admin = newOwner;
+    }
+
 }
