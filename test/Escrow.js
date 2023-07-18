@@ -24,8 +24,10 @@ describe("Escrow", async function () {
     expect(await exampleToken.balanceOf(escrowContract.target)).to.equal(10);
   });
 
-  it("Sends the erc20 token in batches", async function () {
+  it("Approve a user into escrow and sends the erc20 token in batches", async function () {
     await exampleToken.mint(escrowContract.target, 10);
+    await escrowContract.createUser(bob.address);
+    await escrowContract.createUser(tom.address);
     await escrowContract.multisendToken(
       exampleToken.target,
       [bob.address, tom.address],

@@ -19,6 +19,6 @@ module.exports = {
   gasReporter: {
     currency: "CHF",
     gasPrice: 21,
-    enabled: false,
+    enabled: true,
   },
 };
