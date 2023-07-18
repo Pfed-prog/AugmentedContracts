@@ -50,11 +50,11 @@ contract Escrow is ReentrancyGuard {
         uint lengthContributors = _contributors.length;
         // change to template
         ERC20 erc20token = ERC20(token);
-        for (uint i; i!=lengthContributors; ) {
+        for (uint i; i != lengthContributors; ) {
             erc20token.transferFrom(msg.sender, _contributors[i], _balances[i]);
             total += _balances[i];
             unchecked{++i;}
         }
         emit MultiSent(total, token);
-        }
+    }
 }
