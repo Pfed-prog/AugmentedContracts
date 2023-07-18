@@ -5,10 +5,10 @@ const { config, ethers } = require("hardhat");
 describe("Escrow", async function () {
   let escrowContract, exampleToken;
 
-  let deployer, jane;
+  let deployer, jane, bob, tom;
 
   beforeEach(async () => {
-    [deployer, jane] = await ethers.getSigners();
+    [deployer, jane, bob, tom] = await ethers.getSigners();
     const MyERC20 = await ethers.getContractFactory("Token");
 
     exampleToken = await MyERC20.deploy("Gold", "GLD");
@@ -25,8 +25,14 @@ describe("Escrow", async function () {
     expect(await exampleToken.balanceOf(escrowContract.target)).to.equal(10);
   });
 
-  it("Mints into Escrow", async function () {
+  it("Sends the erc20 token in batches", async function () {
     await exampleToken.mint(escrowContract.target, 10);
-    expect(await exampleToken.balanceOf(escrowContract.target)).to.equal(10);
+    await escrowContract.multisendToken(
+      exampleToken.target,
+      [bob.address, tom.address],
+      [1, 2]
+    );
+    expect(await exampleToken.balanceOf(bob.address)).to.equal(1);
+    expect(await exampleToken.balanceOf(tom.address)).to.equal(2);
   });
 });
